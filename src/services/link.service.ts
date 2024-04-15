@@ -12,6 +12,10 @@ export async function getByOriginalUrl(originalUrl: string) {
 export async function getByShortUrlAndUpdateClickedAmount(shortUrl: string) {
   const link = await getLinkByShortUrl(shortUrl);
   if (link) {
+    if (link.excluded) {
+      throw new BadRequestException("This url is excluded");
+    }
+
     await prisma.link.update({
       where: { shortUrl },
       data: { clickedAmount: link.clickedAmount + 1 },
@@ -50,13 +54,16 @@ export async function updateExcluded(
     throw new BadRequestException("This link does not exist");
   }
 
+  console.log(userId);
+  console.log(link.userId);
+
   if (link.userId !== userId) {
     throw new BadRequestException("You are not the owner of this link");
   }
 
   await prisma.link.update({
     where: { id },
-    data: { excluded },
+    data: { excluded, excludedAt: excluded ? new Date() : null },
   });
 }
 
@@ -68,7 +75,7 @@ export async function updateExcludedAdmin(id: number, excluded: boolean) {
 
   await prisma.link.update({
     where: { id },
-    data: { excluded },
+    data: { excluded, excludedAt: excluded ? new Date() : null },
   });
 }
 

@@ -20,7 +20,7 @@ router.get(
 );
 
 router.get(
-  "/:id",
+  "/byId/:id",
   checkUserAuthenticatedMiddleware,
   checkUserAdminMiddleware,
   getUserController

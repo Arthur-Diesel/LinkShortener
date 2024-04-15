@@ -5,6 +5,7 @@ import {
   getShortUrlController,
   getValidLinksController,
   updateExcludedAdminController,
+  updateExcludedController,
   updateOriginalUrlController,
 } from "../controllers/link.controller";
 import { checkUserAuthenticatedMiddleware } from "../middlewares/checkUserAuthenticatedMiddleware";
@@ -22,20 +23,20 @@ router.post("/", appendUserToRequestMiddleware, createLinkController);
 router.get("/redirect/:shortUrl", getShortUrlController);
 
 router.patch(
-  "excludeUpdate/:id",
+  "/excludeUpdate/:id",
   checkUserAuthenticatedMiddleware,
-  updateExcludedAdminController
+  updateExcludedController
 );
 
 router.patch(
-  "adminExcludeUpdate/:id",
+  "/adminExcludeUpdate/:id",
   checkUserAuthenticatedMiddleware,
   checkUserAdminMiddleware,
   updateExcludedAdminController
 );
 
 router.patch(
-  "originalUrl/:id",
+  "/originalUrl/:id",
   checkUserAuthenticatedMiddleware,
   updateOriginalUrlController
 );

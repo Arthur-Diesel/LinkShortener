@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { jwtSecret } from "../config/constants";
 import { NextFunction, Request, Response } from "express";
+import cookie from "cookie";
 
 declare global {
   namespace Express {
@@ -18,11 +19,12 @@ export async function checkUserAuthenticatedMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  const token = req.cookies.token;
-
-  if (!token) {
+  if (!req.headers.cookie || !cookie.parse(req.headers.cookie).token) {
     return res.status(401).json({ message: "Unauthorized: No token provided" });
   }
+
+  const parsedCookie = cookie.parse(req.headers.cookie);
+  const token = parsedCookie.token;
 
   jwt.verify(token, jwtSecret, (err: Error | null, decoded: any) => {
     if (err) {
